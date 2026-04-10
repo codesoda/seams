@@ -1,21 +1,46 @@
 # Seams 101
 
+**SEAMS: Supervised Engineering via Adversarial Model Steps**
+
+- **S**upervised = human in the loop, not autonomous
+- **E**ngineering = the full process, not just coding
+- **A**dversarial = the cross-model review pattern
+- **M**odel = AI models doing the work
+- **S**teps = one commit at a time
+
 ## What Is Seams?
 
-Seams is an opinionated workflow for using AI coding agents to make changes in **brownfield** codebases -- real production projects with existing code, customers, and complexity. It sits on top of the RALPH (Recursive Autonomous Loop with Planning & Human-oversight) concept but adds structure that RALPH alone doesn't provide: explicit approval tiers, small reviewable commits, cross-model review, and a human always in the loop at the right moments.
+SEAMS is an opinionated workflow for using AI coding agents to make changes in production codebases. It works for greenfield and brownfield alike, but is best suited to **brownfield, complex, or critical** source code -- anywhere a wrong step compounds and can't be easily undone.
+
+It sits on top of the RALPH (Recursive Autonomous Loop with Planning & Human-oversight) concept but adds structure that RALPH alone doesn't provide: explicit approval tiers, small reviewable commits, cross-model review, and a human always in the loop at the right moments.
 
 The name comes from the core idea: instead of asking an agent to deliver a whole user story in one pass, you work **one commit seam at a time**. Each seam is a small, logical, reviewable slice of work -- like a seam in fabric that joins two pieces together without trying to be the whole garment.
 
-## Why Seams Exists
+## Where SEAMS Sits
 
-Vanilla RALPH works well for greenfield projects where the agent can generate a whole feature from scratch. But in brownfield codebases:
+Agentic coding exists on a spectrum:
+
+```
+Move fast, break things ◄────────────────────────► Failure is not an option
+(Prototypes, MVPs)                                  (Aviation, medical devices)
+
+Vibe coding ──► RALPH ──► SEAMS ──► Safety-critical formal verification
+```
+
+SEAMS sits toward the right but it's not at the extreme. It's for projects where **bugs have real consequences but you're not certifying flight software**. Production SaaS, payment systems, auth flows, data migrations -- things where shipping a mistake means angry customers, data loss, or a 3am incident, not a plane falling out of the sky.
+
+The approval tiers are the dial that lets you calibrate where on the spectrum you sit for a given project. More on those below.
+
+## Why SEAMS Exists
+
+Vanilla RALPH works well for greenfield projects where the agent can generate a whole feature from scratch. But as complexity and risk increase:
 
 - The agent doesn't have enough understanding of what's already built to make safe, large changes in one pass.
 - Context windows, no matter how large, can't hold every relevant detail about a mature codebase.
 - A single bad decision compounds -- the agent keeps building on top of it.
 - The human has no visibility into what happened during a multi-hour agent session.
 
-Seams addresses this by breaking the "engineering loop" into smaller, inspectable steps with clear decision points about when the agent can keep going and when it must stop for human review.
+SEAMS addresses this by breaking the "engineering loop" into smaller, inspectable steps with clear decision points about when the agent can keep going and when it must stop for human review.
 
 ## The Repeating Pattern
 
@@ -81,7 +106,13 @@ This cold-start pattern is deliberate. It prevents context window degradation ac
 
 ## The Three Approval Tiers
 
-The approval tiers are the heart of what makes seams practical. They determine how much autonomy the agent gets based on the risk of the change:
+The approval tiers are the dial on the spectrum. They determine how much autonomy the agent gets based on the risk of each change. You configure them for your project's risk profile:
+
+- **Startup MVP?** Most things are Tier 1/2. You rarely block. It feels close to RALPH.
+- **Mature product with paying customers?** More Tier 2/3. The agent keeps moving on safe stuff but stops for anything that touches money or user data.
+- **Regulated industry?** Almost everything is Tier 3. The agent proposes, the human approves each step.
+
+What counts as "risky" is project-specific. The examples below are illustrative -- you define your own risk categories in the working agreement.
 
 ### Tier 1 -- Auto-commit
 **What**: Import path fixes, doc updates, test renames, config changes, test-only changes.
